@@ -21,12 +21,15 @@ import javax.sound.sampled.FloatControl;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 
+import lombok.extern.slf4j.Slf4j;
+
 @PluginDescriptor(
         name = "Soulflame Horn Buff",
         description = "Shows a message and overlay for the Soulflame Horn special attack.",
         tags = {"combat", "buff", "special"}
 )
 
+@Slf4j
 public class SoulflameHornPlugin extends Plugin {
 
     private boolean enticeBuff = false;
@@ -178,7 +181,7 @@ public class SoulflameHornPlugin extends Plugin {
 
             if (audioSrc == null)
             {
-                System.err.println("Soulflame horn sound not found.");
+                log.warn("Soulflame Horn: Sound file not found.");
                 return;
             }
 
