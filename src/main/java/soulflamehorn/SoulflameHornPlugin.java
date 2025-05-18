@@ -78,42 +78,19 @@ public class SoulflameHornPlugin extends Plugin {
             return;
         }
 
+        Player player = (Player) actor;
+
+        if (player.equals(client.getLocalPlayer())) {
+            return;
+        }
+
         if (!config.enableBattlecry()) {
             return;
         }
 
-        Player player = (Player) actor;
-
-
-        if (player.getAnimation() == 12158)
-        {
-            if (player.equals(client.getLocalPlayer())) {
-
-
-                ItemContainer equipment = client.getItemContainer(InventoryID.EQUIPMENT);
-                if (equipment == null) {
-                    return;
-                }
-
-                Item weaponSlot = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
-                if (weaponSlot == null || weaponSlot.getId() != 30759) {
-                    return;
-                }
-
-                client.addChatMessage(ChatMessageType.PUBLICCHAT, client.getLocalPlayer().getName(), config.specShout(), null);
-
-                enticeBuff = true;
-
-                //10 ticks = 6 seconds
-                enticeBuffTicks = 10;
-
-                //tuturu
-                playHornSound();
-            }
-            else{
-                player.setOverheadText(config.specShout());
-                player.setOverheadCycle(120); //
-                }
+        if (player.getAnimation() == 12158) {
+            player.setOverheadText(config.specShout());
+            player.setOverheadCycle(120);
         }
 
     }
@@ -127,13 +104,12 @@ public class SoulflameHornPlugin extends Plugin {
 
         String specMessage = event.getMessage().toLowerCase();
 
-        if (specMessage.contains("encourages you with their soulflame horn"))
+        if (specMessage.contains("encourages you with their soulflame horn") || (specMessage.contains("you encourage nearby allies") && specMessage.contains("empowers your next melee")))
         {
            enticeBuff = true;
            //10 ticks = 6 seconds
            enticeBuffTicks = 10;
 
-           //tuturu
             playHornSound();
         }
     }
@@ -173,7 +149,7 @@ public class SoulflameHornPlugin extends Plugin {
 
     private void playHornSound()
     {
-        try (InputStream audioSrc = getClass().getResourceAsStream("/soulflamehorn/Tuturu.wav"))
+        try (InputStream audioSrc = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
         {
             if (!config.enableSound()) {
                 return;

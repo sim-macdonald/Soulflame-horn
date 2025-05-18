@@ -53,7 +53,7 @@ public interface SoulflameHornConfig extends Config {
     @ConfigItem(
             keyName = "enableSound",
             name = "Enable Sound",
-            description = "Play a sound when the spec is used.",
+            description = "Plays a silly sound when the spec is used.",
             position = 5
     )
     default boolean enableSound() { return false; }
