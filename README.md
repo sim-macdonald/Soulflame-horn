@@ -16,9 +16,9 @@ Option to have characters say something when they horn:
 
 This project contains a sound that is licensed under the [Pixabay Content License](https://pixabay.com/service/license-summary/) :
 
-  **Party horn** by [TiesWijnen (Freesound)](https://pixabay.com/users/freesound_community-46691455/)
-  **Source**: [Pixabay](https://pixabay.com/sound-effects/party-horn-68443/)
-  Pixabay Content License allows for free commercial use without having to attribute the author and modify or adapt content into new works.
+  -**Party horn** by [TiesWijnen (Freesound)](https://pixabay.com/users/freesound_community-46691455/)
+  -**Source**: [Pixabay](https://pixabay.com/sound-effects/party-horn-68443/)
+  -Pixabay Content License allows for free commercial use without having to attribute the author and modify or adapt content into new works.
 
   
 
