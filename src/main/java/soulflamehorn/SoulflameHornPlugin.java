@@ -12,12 +12,18 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.util.AudioPlayer;
+import net.runelite.client.audio.AudioPlayer;
 
 import javax.inject.Inject;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 import lombok.extern.slf4j.Slf4j;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 
 @PluginDescriptor(
         name = "Soulflame Horn Buff",
@@ -27,6 +33,9 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 public class SoulflameHornPlugin extends Plugin {
+
+    @Inject
+    private AudioPlayer audioPlayer;
 
     private boolean enticeBuff = false;
     @Getter
@@ -157,15 +166,22 @@ public class SoulflameHornPlugin extends Plugin {
 
     private void playHornSound()
     {
-        if (!config.enableSound()) {
+        if (!config.enableSound())
+        {
             return;
         }
 
-        try
+        try (InputStream stream = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
         {
-            AudioPlayer.playSound(getClass().getResource("/soulflamehorn/party-horn-68443.wav"), config.soundVolume());
+            if (stream == null)
+            {
+                log.warn("Horn sound resource not found");
+                return;
+            }
+
+            audioPlayer.play(stream, config.soundVolume());
         }
-        catch (Exception e)
+        catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
         {
             log.warn("Failed to play Horn sound", e);
         }
