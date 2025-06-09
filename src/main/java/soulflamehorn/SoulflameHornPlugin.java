@@ -21,9 +21,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 
 @PluginDescriptor(
         name = "Soulflame Horn Buff",
@@ -66,6 +64,12 @@ public class SoulflameHornPlugin extends Plugin {
         if (config.enableOverlay())
         {
             overlayManager.add(overlay);
+        }
+
+        //create custom sound folder
+        if (!SOUND_DIR.exists() && !SOUND_DIR.mkdirs())
+        {
+            log.warn("Failed to create sound directory at {}", SOUND_DIR.getAbsolutePath());
         }
     }
 
@@ -164,6 +168,9 @@ public class SoulflameHornPlugin extends Plugin {
     }
 
 
+    //directory for custom sound
+    private static final File SOUND_DIR = new File(System.getProperty("user.home"), ".runelite/soulflamehorn");
+
     private void playHornSound()
     {
         if (!config.enableSound())
@@ -171,19 +178,34 @@ public class SoulflameHornPlugin extends Plugin {
             return;
         }
 
-        try (InputStream stream = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
-        {
-            if (stream == null)
-            {
-                log.warn("Horn sound resource not found");
-                return;
-            }
+        String customSoundFileName = config.customHornSoundFilename().trim();
+        File customSound = new File(SOUND_DIR, customSoundFileName);
 
-            audioPlayer.play(stream, config.soundVolume());
-        }
-        catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
+        if (!customSoundFileName.isEmpty() && config.enableCustomSound())
         {
-            log.warn("Failed to play Horn sound", e);
+            try (InputStream stream = new BufferedInputStream(new FileInputStream(customSound)))
+            {
+                audioPlayer.play(stream, config.soundVolume());
+            }
+            catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
+            {
+                log.warn("Failed to play custom horn sound: {}", customSound.getAbsolutePath(), e);
+            }
+        }
+        else {
+            try (InputStream stream = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
+            {
+                if (stream == null) {
+                    log.warn("Default horn sound not found");
+                    return;
+                }
+
+                audioPlayer.play(stream, config.soundVolume());
+            }
+            catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
+            {
+                log.warn("Failed to play Horn sound", e);
+            }
         }
     }
 

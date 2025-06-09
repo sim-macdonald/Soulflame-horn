@@ -66,4 +66,20 @@ public interface SoulflameHornConfig extends Config {
     )
     @Range(min = 0, max = 100)
     default int soundVolume() { return 50; }
+
+    @ConfigItem(
+            keyName = "enableCustomSound",
+            name = "Enable Custom Sound",
+            description = "Play a custom horn sound. Enable Sound must also be on.",
+            position = 7
+    )
+    default boolean enableCustomSound() { return false; }
+
+    @ConfigItem(
+            keyName = "customHornSoundFilename",
+            name = "Custom Horn Sound Filename",
+            description = "Name of a .wav file to play (must be placed in ~/.runelite/soulflamehorn). Include the .wav in the name when entering, for example hornsound.wav",
+            position = 8
+    )
+    default String customHornSoundFilename() { return ""; }
 }
