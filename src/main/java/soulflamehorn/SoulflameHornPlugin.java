@@ -12,14 +12,10 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.AudioPlayer;
 
 import javax.inject.Inject;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.FloatControl;
-import java.io.BufferedInputStream;
-import java.io.InputStream;
+
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -104,13 +100,24 @@ public class SoulflameHornPlugin extends Plugin {
 
         String specMessage = event.getMessage().toLowerCase();
 
-        if (specMessage.contains("encourages you with their soulflame horn") || (specMessage.contains("you encourage nearby allies") && specMessage.contains("empowers your next melee")))
+        if (specMessage.contains("encourages you with their soulflame horn") || (specMessage.contains("you encourage nearby allies, which also empowers your next melee")))
         {
            enticeBuff = true;
            //10 ticks = 6 seconds
            enticeBuffTicks = 10;
 
             playHornSound();
+        }
+
+        if (specMessage.contains("you encourage nearby allies, which also empowers your next melee") && config.enableBattlecry())
+        {
+            Player player = client.getLocalPlayer();
+            if (player != null)
+            {
+                player.setOverheadText(config.specShout());
+                player.setOverheadCycle(120);
+            }
+
         }
     }
 
@@ -147,60 +154,21 @@ public class SoulflameHornPlugin extends Plugin {
         return enticeBuff;
     }
 
+
     private void playHornSound()
     {
-        try (InputStream audioSrc = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
+        if (!config.enableSound()) {
+            return;
+        }
+
+        try
         {
-            if (!config.enableSound()) {
-                return;
-            }
-
-            if (audioSrc == null)
-            {
-                log.warn("Soulflame Horn: Sound file not found.");
-                return;
-            }
-
-            InputStream bufferedInput = new BufferedInputStream(audioSrc);
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(bufferedInput);
-
-            Clip clip = AudioSystem.getClip();
-            clip.open(inputStream);
-
-            setVolume(clip, config.soundVolume());
-
-            clip.start();
+            AudioPlayer.playSound(getClass().getResource("/soulflamehorn/party-horn-68443.wav"), config.soundVolume());
         }
         catch (Exception e)
         {
-            e.printStackTrace();
+            log.warn("Failed to play Horn sound", e);
         }
-    }
-
-    //volume setting helper function
-    private void setVolume(Clip clip, int volume)
-    {
-        if (!clip.isControlSupported(FloatControl.Type.MASTER_GAIN))
-            return;
-
-        FloatControl gainControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-
-        float min = gainControl.getMinimum();
-        float max = gainControl.getMaximum();
-
-        float gain;
-        if (volume == 0)
-        {
-            gain = min;
-        }
-        else
-        {
-            float percent = volume / 100f;
-            gain = (float) (Math.log10(percent) * 20);
-            gain = Math.max(min, Math.min(gain, max));
-        }
-
-        gainControl.setValue(gain);
     }
 
 }
