@@ -78,7 +78,7 @@ public interface SoulflameHornConfig extends Config {
     @ConfigItem(
             keyName = "customHornSoundFilename",
             name = "Custom Horn Sound Filename",
-            description = "Name of a .wav file to play (must be placed in ~/.runelite/soulflamehorn). Include the .wav in the name when entering, for example hornsound.wav",
+            description = "Name of a .wav file to play (must be placed in ~/.runelite/soulflamehorn). Include the .wav in the name when entering, for example hornsound.wav (name is case sensitive)",
             position = 8
     )
     default String customHornSoundFilename() { return ""; }
