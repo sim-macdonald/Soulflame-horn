@@ -13,6 +13,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.audio.AudioPlayer;
+import net.runelite.client.RuneLite;
 
 import javax.inject.Inject;
 import javax.sound.sampled.LineUnavailableException;
@@ -169,7 +170,7 @@ public class SoulflameHornPlugin extends Plugin {
 
 
     //directory for custom sound
-    private static final File SOUND_DIR = new File(System.getProperty("user.home"), ".runelite/soulflamehorn");
+    private static final File SOUND_DIR = new File(RuneLite.RUNELITE_DIR, "soulflamehorn");
 
     private void playHornSound()
     {
@@ -179,7 +180,7 @@ public class SoulflameHornPlugin extends Plugin {
         }
 
         String customSoundFileName = config.customHornSoundFilename().trim();
-        File customSound = new File(SOUND_DIR, customSoundFileName);
+        File customSound = new File(SOUND_DIR, new File(customSoundFileName).getName());
 
         if (!customSoundFileName.isEmpty() && config.enableCustomSound())
         {
