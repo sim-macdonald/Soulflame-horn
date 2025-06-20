@@ -26,7 +26,7 @@ import java.io.*;
 
 @PluginDescriptor(
         name = "Soulflame Horn Buff",
-        description = "Shows a message and overlay for the Soulflame Horn special attack.",
+        description = "Shows a message and overlay for the Soulflame Horn special attack. Also plays a sound.",
         tags = {"combat", "buff", "special"}
 )
 
@@ -194,7 +194,7 @@ public class SoulflameHornPlugin extends Plugin {
             }
         }
         else {
-            try (InputStream stream = getClass().getResourceAsStream("/soulflamehorn/party-horn-68443.wav"))
+            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("soulflamehorn/party-horn-68443.wav"))
             {
                 if (stream == null) {
                     log.warn("Default horn sound not found");

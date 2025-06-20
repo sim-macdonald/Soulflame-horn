@@ -12,6 +12,8 @@ Option to have characters say something when they horn:
 
 ![SoulhornBuff2](https://github.com/user-attachments/assets/e501fc0a-e24f-4707-977d-2919c69c1f2c)
 
+You can also add a custom sound
+
 ## Media Licensing
 
 This project contains a sound that is licensed under the [Pixabay Content License](https://pixabay.com/service/license-summary/) :
