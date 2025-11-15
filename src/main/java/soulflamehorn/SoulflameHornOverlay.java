@@ -27,7 +27,8 @@ public class SoulflameHornOverlay extends OverlayPanel {
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (!plugin.isEnticeBuffActive() || !config.enableOverlay()) {
+        if (!config.displayPanel() || (!config.alwaysShowPanel() && !plugin.isEnticeBuffActive()))
+        {
             return null;
         }
         Color colour = config.messageColour();

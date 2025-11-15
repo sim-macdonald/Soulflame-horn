@@ -9,6 +9,7 @@ import net.runelite.api.events.GameTick;
 import net.runelite.api.events.StatChanged;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -21,6 +22,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 
 
 import lombok.extern.slf4j.Slf4j;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 
 import java.io.*;
 
@@ -31,27 +33,37 @@ import java.io.*;
 )
 
 @Slf4j
-public class SoulflameHornPlugin extends Plugin {
-
-    @Inject
-    private AudioPlayer audioPlayer;
-
-    private boolean enticeBuff = false;
-    @Getter
-    private int enticeBuffTicks = 0;
-
+public class SoulflameHornPlugin extends Plugin
+{
     @Inject
     private Client client;
+
+    @Inject
+    private InfoBoxManager infoboxManager;
 
     @Inject
     private OverlayManager overlayManager;
 
     @Inject
+    private ItemManager itemManager;
+
+    @Inject
     private SoulflameHornOverlay overlay;
 
-    @Getter
     @Inject
     private SoulflameHornConfig config;
+
+    @Inject
+    private AudioPlayer audioPlayer;
+
+    @Getter
+    private int enticeBuffTicks = 0;
+
+    @Getter
+    private boolean enticeBuffActive = false;
+
+    @Getter
+    private boolean soulflameHornEquipped = false;
 
     @Provides
     SoulflameHornConfig provideConfig(ConfigManager configManager)
@@ -62,9 +74,15 @@ public class SoulflameHornPlugin extends Plugin {
     @Override
     protected void startUp()
     {
-        if (config.enableOverlay())
+        if (config.displayPanel())
         {
             overlayManager.add(overlay);
+        }
+
+        if (config.displayInfobox())
+        {
+            SoulflameHornInfobox infobox = new SoulflameHornInfobox(itemManager.getImage(30759), this, config);
+            infoboxManager.addInfoBox(infobox);
         }
 
         //create custom sound folder
@@ -99,10 +117,9 @@ public class SoulflameHornPlugin extends Plugin {
         }
 
         if (player.getAnimation() == 12158) {
-            player.setOverheadText(config.specShout());
+            player.setOverheadText(config.battlecryMessage());
             player.setOverheadCycle(120);
         }
-
     }
 
     @Subscribe
@@ -116,7 +133,7 @@ public class SoulflameHornPlugin extends Plugin {
 
         if (specMessage.contains("encourages you with their soulflame horn") || (specMessage.contains("you encourage nearby allies, which also empowers your next melee")))
         {
-           enticeBuff = true;
+           enticeBuffActive = true;
            //10 ticks = 6 seconds
            enticeBuffTicks = 10;
 
@@ -128,7 +145,7 @@ public class SoulflameHornPlugin extends Plugin {
             Player player = client.getLocalPlayer();
             if (player != null)
             {
-                player.setOverheadText(config.specShout());
+                player.setOverheadText(config.battlecryMessage());
                 player.setOverheadCycle(120);
             }
 
@@ -137,14 +154,14 @@ public class SoulflameHornPlugin extends Plugin {
 
     @Subscribe
     public void onStatChanged(StatChanged event) {
-        if (!enticeBuff) {
+        if (!enticeBuffActive) {
             return;
         }
         Skill skill = event.getSkill();
 
         // clear buff on melee shit, not sure how to make it work for defensive. someone smarter than me can figure out how to clear the buff.
         if (skill == Skill.ATTACK || skill == Skill.STRENGTH){
-            enticeBuff = false;
+            enticeBuffActive = false;
             enticeBuffTicks = 0;
         }
     }
@@ -153,21 +170,15 @@ public class SoulflameHornPlugin extends Plugin {
     @Subscribe
     public void onGameTick(GameTick event)
     {
-        if (enticeBuff)
+        if (enticeBuffActive)
         {
             enticeBuffTicks--;
             if (enticeBuffTicks <= 0)
             {
-                enticeBuff = false;
+                enticeBuffActive = false;
             }
         }
     }
-
-    public boolean isEnticeBuffActive()
-    {
-        return enticeBuff;
-    }
-
 
     //directory for custom sound
     private static final File SOUND_DIR = new File(RuneLite.RUNELITE_DIR, "soulflamehorn");
@@ -209,5 +220,4 @@ public class SoulflameHornPlugin extends Plugin {
             }
         }
     }
-
 }
