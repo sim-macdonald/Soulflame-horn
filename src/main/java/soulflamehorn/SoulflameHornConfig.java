@@ -19,7 +19,7 @@ public interface SoulflameHornConfig extends Config {
     @ConfigItem(
             keyName = "enableBattlecry",
             name = "Enable Battlecry",
-            description = "Display a message over the character using the horn special attack.",
+            description = "Display a message over the player using the horn special attack.",
             section = generalSettingsSection,
             position = 0
     )
@@ -27,7 +27,7 @@ public interface SoulflameHornConfig extends Config {
 
     @ConfigItem(
             keyName = "specShout",
-            name = "Battlecry",
+            name = "Battlecry Text",
             description = "The displayed message when battlecry is enabled.",
             section = generalSettingsSection,
             position = 1
@@ -62,20 +62,38 @@ public interface SoulflameHornConfig extends Config {
     default boolean displayPanel() { return false; }
 
     @ConfigItem(
-            keyName = "colour",
-            name = "Colour",
-            description = "Colour of the text in the overlay.",
+            keyName = "displayHornRadius",
+            name = "Display Horn Radius",
+            description = "Display the currently configured horn radius in the panel.",
             section = overlaySettingsSection,
             position = 2
+    )
+    default boolean displayHornRadius() { return false; }
+
+    @ConfigItem(
+            keyName = "displayMaxPlayers",
+            name = "Display Max Players",
+            description = "Display the currently configured max players in the panel.",
+            section = overlaySettingsSection,
+            position = 3
+    )
+    default boolean displayMaxPlayers() { return false; }
+
+    @ConfigItem(
+            keyName = "colour",
+            name = "Colour",
+            description = "Colour of the text in the panel.",
+            section = overlaySettingsSection,
+            position = 5
     )
     default Color messageColour() {return Color.GREEN;}
 
     @ConfigItem(
             keyName = "fontSize",
             name = "Font Size",
-            description = "Size of the text in the overlay.",
+            description = "Size of the text in the panel.",
             section = overlaySettingsSection,
-            position = 3
+            position = 6
     )
     default int fontSize() {return 16;}
 
@@ -84,7 +102,7 @@ public interface SoulflameHornConfig extends Config {
             name = "Always Show Panel",
             description = "Always show the buff panel, even when the buff is not active.",
             section = overlaySettingsSection,
-            position = 4
+            position = 7
     )
     default boolean alwaysShowPanel() { return false; }
 
@@ -142,6 +160,4 @@ public interface SoulflameHornConfig extends Config {
             position = 4
     )
     default boolean enableSoundOnFail() { return false; }
-
-    // Other Settings
 }

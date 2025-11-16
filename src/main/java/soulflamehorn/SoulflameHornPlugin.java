@@ -8,6 +8,7 @@ import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.StatChanged;
 import net.runelite.api.gameval.AnimationID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -113,6 +114,16 @@ public class SoulflameHornPlugin extends Plugin
         }
 
         return weapon.getId() == ItemID.SOULFLAME_HORN;
+    }
+
+    public int getRadius()
+    {
+        return client.getVarbitValue(VarbitID.YAMA_HORN_RADIUS);
+    }
+
+    public int getMaxPlayers()
+    {
+        return client.getVarbitValue(VarbitID.YAMA_HORN_MAX_PLAYERS);
     }
 
     @Subscribe

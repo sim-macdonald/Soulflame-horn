@@ -1,7 +1,6 @@
 package soulflamehorn;
 
 import lombok.Setter;
-import net.runelite.api.Client;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
@@ -37,7 +36,19 @@ public class SoulflameHornOverlay extends OverlayPanel {
 
         panelComponent.getChildren().clear();
 
-        panelComponent.getChildren().add(LineComponent.builder().left("Soulflame Horn").right(plugin.getEnticeBuffTicks() + "").leftColor(colour).rightColor(colour).build());
+        // Soulflame Horn Buff Status
+        panelComponent.getChildren().add(LineComponent.builder().left("Soulflame Horn").right(plugin.isEnticeBuffActive() ? String.valueOf(plugin.getEnticeBuffTicks()) : "").leftColor(colour).rightColor(colour).build());
+
+        // Additional Info
+        if (config.displayHornRadius())
+        {
+            panelComponent.getChildren().add(LineComponent.builder().left("Radius").right(String.valueOf(plugin.getRadius())).leftColor(colour).rightColor(colour).build());
+        }
+
+        if (config.displayMaxPlayers())
+        {
+            panelComponent.getChildren().add(LineComponent.builder().left("Max Players").right(String.valueOf(plugin.getMaxPlayers())).leftColor(colour).rightColor(colour).build());
+        }
 
         return super.render(graphics);
     }

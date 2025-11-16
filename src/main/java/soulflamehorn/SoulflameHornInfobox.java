@@ -1,6 +1,7 @@
 package soulflamehorn;
 
 import net.runelite.client.ui.overlay.infobox.InfoBox;
+import net.runelite.client.util.ColorUtil;
 
 import javax.inject.Inject;
 import java.awt.Color;
@@ -28,7 +29,18 @@ public class SoulflameHornInfobox extends InfoBox
     @Override
     public String getTooltip()
     {
-        return "Soulflame Horn Buff";
+        String buff = String.format("Soulflame Horn Buff: %s",
+                plugin.isEnticeBuffActive()
+                        ? ColorUtil.wrapWithColorTag("Active (" + plugin.getEnticeBuffTicks() + " ticks left)", Color.GREEN)
+                        : ColorUtil.wrapWithColorTag("Inactive", Color.RED)
+        );
+
+        String rangeAndPlayers = String.format("</br>Range: %d</br>Max Players: %d",
+                plugin.getRadius(),
+                plugin.getMaxPlayers()
+        );
+
+        return String.format("%s%s", buff, plugin.isSoulflameHornEquipped() ? rangeAndPlayers : "");
     }
 
     @Override
