@@ -7,6 +7,7 @@ import net.runelite.api.events.AnimationChanged;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameTick;
 import net.runelite.api.events.StatChanged;
+import net.runelite.api.gameval.AnimationID;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.game.ItemManager;
@@ -15,6 +16,8 @@ import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.RuneLite;
+import net.runelite.api.gameval.ItemID;
+import net.runelite.api.gameval.InventoryID;
 
 import javax.inject.Inject;
 import javax.sound.sampled.LineUnavailableException;
@@ -62,9 +65,6 @@ public class SoulflameHornPlugin extends Plugin
     @Getter
     private boolean enticeBuffActive = false;
 
-    @Getter
-    private boolean soulflameHornEquipped = false;
-
     @Provides
     SoulflameHornConfig provideConfig(ConfigManager configManager)
     {
@@ -98,6 +98,22 @@ public class SoulflameHornPlugin extends Plugin
         overlayManager.remove(overlay);
     }
 
+    public boolean isSoulflameHornEquipped()
+    {
+        ItemContainer equipment = client.getItemContainer(InventoryID.WORN);
+        if (equipment == null)
+        {
+            return false;
+        }
+
+        Item weapon = equipment.getItem(EquipmentInventorySlot.WEAPON.getSlotIdx());
+        if (weapon == null)
+        {
+            return false;
+        }
+
+        return weapon.getId() == ItemID.SOULFLAME_HORN;
+    }
 
     @Subscribe
     public void onAnimationChanged(AnimationChanged event) {
@@ -116,7 +132,7 @@ public class SoulflameHornPlugin extends Plugin
             return;
         }
 
-        if (player.getAnimation() == 12158) {
+        if (player.getAnimation() == AnimationID.SOULFLAME_HORN_BLOW_03) {
             player.setOverheadText(config.battlecryMessage());
             player.setOverheadCycle(120);
         }
@@ -148,7 +164,11 @@ public class SoulflameHornPlugin extends Plugin
                 player.setOverheadText(config.battlecryMessage());
                 player.setOverheadCycle(120);
             }
+        }
 
+        if (specMessage.contains("you blow your horn into the wind. no-one nearby is able to listen") && config.enableSoundOnFail())
+        {
+            playHornSound();
         }
     }
 
@@ -192,12 +212,13 @@ public class SoulflameHornPlugin extends Plugin
 
         String customSoundFileName = config.customHornSoundFilename().trim();
         File customSound = new File(SOUND_DIR, new File(customSoundFileName).getName());
+        float gain = 20f * (float) Math.log10(config.soundVolume() / 100f);
 
         if (!customSoundFileName.isEmpty() && config.enableCustomSound())
         {
             try (InputStream stream = new BufferedInputStream(new FileInputStream(customSound)))
             {
-                audioPlayer.play(stream, config.soundVolume());
+                audioPlayer.play(stream, gain);
             }
             catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
             {
@@ -212,11 +233,11 @@ public class SoulflameHornPlugin extends Plugin
                     return;
                 }
 
-                audioPlayer.play(stream, config.soundVolume());
+                audioPlayer.play(stream, gain);
             }
             catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
             {
-                log.warn("Failed to play Horn sound", e);
+                log.warn("Failed to play default Soulflame Horn sound", e);
             }
         }
     }

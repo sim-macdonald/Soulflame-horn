@@ -7,14 +7,41 @@ import java.awt.*;
 @ConfigGroup("soulflamehorn")
 public interface SoulflameHornConfig extends Config {
 
+    // General Settings Section
+
+    @ConfigSection(
+            name = "General Settings",
+            description = "General settings.",
+            position = 0
+    )
+    String generalSettingsSection = "generalSettings";
+
+    @ConfigItem(
+            keyName = "enableBattlecry",
+            name = "Enable Battlecry",
+            description = "Display a message over the character using the horn special attack.",
+            section = generalSettingsSection,
+            position = 0
+    )
+    default boolean enableBattlecry() { return true; }
+
+    @ConfigItem(
+            keyName = "specShout",
+            name = "Battlecry",
+            description = "The displayed message when battlecry is enabled.",
+            section = generalSettingsSection,
+            position = 1
+    )
+    default String battlecryMessage() {return "Tuturu!";}
+
+    // Overlay Settings Section
+
     @ConfigSection(
             name = "Overlay",
             description = "Overlay settings.",
-            position = 0
+            position = 1
     )
     String overlaySettingsSection = "overlaySettings";
-
-    // Overlay Settings Section
 
     @ConfigItem(
             keyName = "displayInfobox",
@@ -26,7 +53,7 @@ public interface SoulflameHornConfig extends Config {
     default boolean displayInfobox() { return true; }
 
     @ConfigItem(
-            keyName = "displayPanel",
+            keyName = "enableOverlay",
             name = "Display Buff Panel",
             description = "Show the Soulflame Horn buff panel. Doesn't flag the buff as used if you are on defensive stance.",
             section = overlaySettingsSection,
@@ -61,29 +88,21 @@ public interface SoulflameHornConfig extends Config {
     )
     default boolean alwaysShowPanel() { return false; }
 
-    // Other Settings
+    // Sound Settings Section
 
-    @ConfigItem(
-            keyName = "enableBattlecry",
-            name = "Enable Battlecry",
-            description = "Display a message over the character using the horn special attack.",
-            position = 3
+    @ConfigSection(
+            name = "Sound Settings",
+            description = "Sound settings.",
+            position = 2
     )
-    default boolean enableBattlecry() { return true; }
-
-    @ConfigItem(
-            keyName = "battlecryMessage",
-            name = "Battlecry",
-            description = "The displayed message when battlecry is enabled.",
-            position = 4
-    )
-    default String battlecryMessage() {return "Tuturu!";}
+    String soundSettingsSection = "soundSettings";
 
     @ConfigItem(
             keyName = "enableSound",
             name = "Enable Sound",
             description = "Play a sound when the special attack is used.",
-            position = 5
+            section = soundSettingsSection,
+            position = 0
     )
     default boolean enableSound() { return false; }
 
@@ -91,16 +110,18 @@ public interface SoulflameHornConfig extends Config {
             keyName = "soundVolume",
             name = "Volume",
             description = "Volume of the horn sound.",
-            position = 6
+            section = soundSettingsSection,
+            position = 1
     )
-    @Range(min = 0, max = 100)
+    @Range(max = 200)
     default int soundVolume() { return 50; }
 
     @ConfigItem(
             keyName = "enableCustomSound",
             name = "Enable Custom Sound",
             description = "Play a custom horn sound. Enable Sound must also be on.",
-            position = 7
+            section = soundSettingsSection,
+            position = 2
     )
     default boolean enableCustomSound() { return false; }
 
@@ -108,7 +129,19 @@ public interface SoulflameHornConfig extends Config {
             keyName = "customHornSoundFilename",
             name = "Custom Horn Sound Filename",
             description = "Name of a .wav file to play (must be placed in ~/.runelite/soulflamehorn). Include the .wav in the name when entering, for example hornsound.wav (name is case sensitive)",
-            position = 8
+            section = soundSettingsSection,
+            position = 3
     )
     default String customHornSoundFilename() { return ""; }
+
+    @ConfigItem(
+            keyName = "enableSoundOnFail",
+            name = "Enable Sound On Fail",
+            description = "Play the horn sound even if the special attack fails, allowing you to test it out without other players around.",
+            section = soundSettingsSection,
+            position = 4
+    )
+    default boolean enableSoundOnFail() { return false; }
+
+    // Other Settings
 }
