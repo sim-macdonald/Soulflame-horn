@@ -15,6 +15,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 import net.runelite.client.audio.AudioPlayer;
 import net.runelite.client.RuneLite;
 import net.runelite.api.gameval.ItemID;
@@ -24,9 +25,7 @@ import javax.inject.Inject;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 
-
 import lombok.extern.slf4j.Slf4j;
-import net.runelite.client.ui.overlay.infobox.InfoBoxManager;
 
 import java.io.*;
 
@@ -78,16 +77,10 @@ public class SoulflameHornPlugin extends Plugin
     @Override
     protected void startUp()
     {
-        if (config.displayPanel())
-        {
-            overlayManager.add(overlay);
-        }
-
-        if (config.displayInfobox())
-        {
-            SoulflameHornInfobox infobox = new SoulflameHornInfobox(itemManager.getImage(ItemID.SOULFLAME_HORN), this, config);
-            infoboxManager.addInfoBox(infobox);
-        }
+        overlayManager.add(overlay);
+        
+        SoulflameHornInfobox infobox = new SoulflameHornInfobox(itemManager.getImage(ItemID.SOULFLAME_HORN), this, config);
+        infoboxManager.addInfoBox(infobox);
 
         //create custom sound folder
         if (!SOULFLAME_HORN_DIR.exists() && !SOULFLAME_HORN_DIR.mkdirs())
