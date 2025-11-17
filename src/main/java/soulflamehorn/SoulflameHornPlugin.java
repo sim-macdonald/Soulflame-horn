@@ -60,6 +60,9 @@ public class SoulflameHornPlugin extends Plugin
     @Inject
     private AudioPlayer audioPlayer;
 
+    //directory for sounds
+    private static final File SOULFLAME_HORN_DIR = new File(RuneLite.RUNELITE_DIR.getPath() + File.separator + "soulflamehorn");
+
     @Getter
     private int enticeBuffTicks = 0;
 
@@ -82,14 +85,14 @@ public class SoulflameHornPlugin extends Plugin
 
         if (config.displayInfobox())
         {
-            SoulflameHornInfobox infobox = new SoulflameHornInfobox(itemManager.getImage(30759), this, config);
+            SoulflameHornInfobox infobox = new SoulflameHornInfobox(itemManager.getImage(ItemID.SOULFLAME_HORN), this, config);
             infoboxManager.addInfoBox(infobox);
         }
 
         //create custom sound folder
-        if (!SOUND_DIR.exists() && !SOUND_DIR.mkdirs())
+        if (!SOULFLAME_HORN_DIR.exists() && !SOULFLAME_HORN_DIR.mkdirs())
         {
-            log.warn("Failed to create sound directory at {}", SOUND_DIR.getAbsolutePath());
+            log.warn("Failed to create sound directory at {}", SOULFLAME_HORN_DIR.getAbsolutePath());
         }
     }
 
@@ -211,8 +214,6 @@ public class SoulflameHornPlugin extends Plugin
         }
     }
 
-    //directory for custom sound
-    private static final File SOUND_DIR = new File(RuneLite.RUNELITE_DIR, "soulflamehorn");
 
     private void playHornSound()
     {
@@ -221,35 +222,25 @@ public class SoulflameHornPlugin extends Plugin
             return;
         }
 
+        String defaultSoundFileName = "party-horn-68443.wav";
         String customSoundFileName = config.customHornSoundFilename().trim();
-        File customSound = new File(SOUND_DIR, new File(customSoundFileName).getName());
         float gain = 20f * (float) Math.log10(config.soundVolume() / 100f);
 
-        if (!customSoundFileName.isEmpty() && config.enableCustomSound())
-        {
-            try (InputStream stream = new BufferedInputStream(new FileInputStream(customSound)))
-            {
-                audioPlayer.play(stream, gain);
-            }
-            catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
-            {
-                log.warn("Failed to play custom horn sound: {}", customSound.getAbsolutePath(), e);
-            }
+        if (!customSoundFileName.isEmpty() && config.enableCustomSound()) {
+            playSound(customSoundFileName, gain);
+        } else {
+            playSound(defaultSoundFileName, gain);
         }
-        else {
-            try (InputStream stream = getClass().getClassLoader().getResourceAsStream("soulflamehorn/party-horn-68443.wav"))
-            {
-                if (stream == null) {
-                    log.warn("Default horn sound not found");
-                    return;
-                }
-
-                audioPlayer.play(stream, gain);
-            }
-            catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
-            {
-                log.warn("Failed to play default Soulflame Horn sound", e);
-            }
+    }
+    private void playSound(String fileName, float gain)
+    {
+        try {
+            File soundFile = new File(SOULFLAME_HORN_DIR, fileName);
+            audioPlayer.play(soundFile, gain);
+        }
+        catch (IOException | UnsupportedAudioFileException | LineUnavailableException e)
+        {
+            log.warn("Failed to play sound: {}", fileName, e);
         }
     }
 }
