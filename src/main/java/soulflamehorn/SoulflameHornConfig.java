@@ -106,12 +106,47 @@ public interface SoulflameHornConfig extends Config {
     )
     default boolean alwaysShowPanel() { return false; }
 
+    @ConfigSection(
+            name = "Horn Radius",
+            description = "Radius of the Soulflame Horn special attack.",
+            position = 2
+    )
+    String radiusSection = "radiusSettings";
+
+    @ConfigItem(
+            keyName = "showHornRadiusOutline",
+            name = "Show Horn Radius Outline",
+            description = "Show an outline of the horn radius around the player when the horn is equipped.",
+            section = radiusSection,
+            position = 0
+    )
+    default boolean showHornRadiusOutline() { return false; }
+
+    @ConfigItem(
+            keyName = "hornRadiusBorderColor",
+            name = "Border Color",
+            description = "Color of the horn radius outline border.",
+            section = radiusSection,
+            position = 1
+    )
+    default Color hornRadiusBorderColor() { return Color.RED; }
+
+    @ConfigItem(
+            keyName = "hornRadiusBorderWidth",
+            name = "Border Width",
+            description = "Width of the horn radius outline border.",
+            section = radiusSection,
+            position = 2
+    )
+    @Range(max = 10)
+    default int hornRadiusBorderWidth() { return 2; }
+
     // Sound Settings Section
 
     @ConfigSection(
             name = "Sound Settings",
             description = "Sound settings.",
-            position = 2
+            position = 3
     )
     String soundSettingsSection = "soundSettings";
 
