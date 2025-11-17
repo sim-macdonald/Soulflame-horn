@@ -35,12 +35,12 @@ public class SoulflameHornInfobox extends InfoBox
                         : ColorUtil.wrapWithColorTag("Inactive", Color.RED)
         );
 
-        String rangeAndPlayers = String.format("</br>Range: %d</br>Max Players: %d",
+        String radiusAndMaxPlayers = String.format("</br>Radius: %d</br>Max Players: %d",
                 plugin.getRadius(),
                 plugin.getMaxPlayers()
         );
 
-        return String.format("%s%s", buff, plugin.isSoulflameHornEquipped() ? rangeAndPlayers : "");
+        return String.format("%s%s", buff, plugin.isSoulflameHornEquipped() ? radiusAndMaxPlayers : "");
     }
 
     @Override
